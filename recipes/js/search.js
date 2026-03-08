@@ -23,6 +23,10 @@ searchInput?.addEventListener('keyup', (e) => {
     resultsCount.textContent = `${visibleCount} Found`;
 
     visibleCount === 0 ? noResults.classList.remove('hidden') : noResults.classList.add('hidden');
+
+    // Show updated counter
+    const visibleCounter = document.querySelectorAll('.recipe-card:not(.hidden)').length;
+    document.getElementById('results-count').textContent = `${visibleCounter} Found`;
 });
 
 // Global Image Fallback (Removes the need for inline 'onerror')
@@ -35,3 +39,21 @@ document.addEventListener('error', (e) => {
         }
     }
 }, true);
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Select all elements with the recipe-card class
+    const recipes = document.querySelectorAll('.recipe-card');
+    const count = recipes.length;
+
+    // 2. Update the "Total" count in the Navbar
+    const totalCountDisplay = document.getElementById('total-count');
+    if (totalCountDisplay) {
+        totalCountDisplay.textContent = count;
+    }
+
+    // 3. Update the "Results" count above the grid
+    const resultsCountDisplay = document.getElementById('results-count');
+    if (resultsCountDisplay) {
+        resultsCountDisplay.textContent = `${count} Found`;
+    }
+});
