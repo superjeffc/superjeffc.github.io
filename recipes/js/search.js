@@ -1,17 +1,20 @@
-// Search Functionality
+// Define Elements on the page
 const searchInput = document.getElementById('search-input');
 const cards = document.querySelectorAll('.recipe-card');
 const noResults = document.getElementById('no-results');
 const resultsHeader = document.getElementById('results-header');
 const resultsCount = document.getElementById('results-count');
+const totalCountDisplay = document.getElementById('total-count');
 
-searchInput?.addEventListener('keyup', (e) => {
-    const term = e.target.value.toLowerCase();
+// Updates counts and visibility
+const updateUI = (term = '') => {
     let visibleCount = 0;
+    const lowerTerm = term.toLowerCase();
 
     cards.forEach(card => {
-        const title = card.getAttribute('data-title').toLowerCase();
-        if (title.includes(term)) {
+        const title = (card.getAttribute('data-title') || "").toLowerCase();
+
+        if (title.includes(lowerTerm)) {
             card.style.display = 'block';
             visibleCount++;
         } else {
@@ -19,37 +22,39 @@ searchInput?.addEventListener('keyup', (e) => {
         }
     });
 
-    resultsHeader.textContent = term === '' ? "All Recipes" : `Search Results for "${e.target.value}"`;
+    // Update Headers & Counters
     resultsCount.textContent = `${visibleCount} Found`;
+    resultsHeader.textContent = term === '' ? "All Recipes" : `Search Results for "${term}"`;
 
-    visibleCount === 0 ? noResults.classList.remove('hidden') : noResults.classList.add('hidden');
+    // Update Navbar total only when the search is empty (initial load/reset)
+    if (term === '' && totalCountDisplay) {
+        totalCountDisplay.textContent = visibleCount;
+    }
+
+    // Toggle Empty State
+    if (visibleCount === 0) {
+        noResults.classList.remove('hidden');
+    } else {
+        noResults.classList.add('hidden');
+    }
+};
+
+// 3. Event Listeners
+searchInput?.addEventListener('keyup', (e) => {
+    updateUI(e.target.value);
 });
 
-// Global Image Fallback (Removes the need for inline 'onerror')
+// Count the actual cards in the HTML as soon as the script runs.
+updateUI();
+
+// 4. Global Image Fallback
 document.addEventListener('error', (e) => {
     if (e.target.tagName.toLowerCase() === 'img') {
         const img = e.target;
         img.style.display = 'none';
+        // Shows the placeholder SVG (next sibling) if the image fails
         if (img.nextElementSibling) {
             img.nextElementSibling.style.display = 'flex';
         }
     }
 }, true);
-
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Select all elements with the recipe-card class
-    const recipes = document.querySelectorAll('.recipe-card');
-    const count = recipes.length;
-
-    // 2. Update the "Total" count in the Navbar
-    const totalCountDisplay = document.getElementById('total-count');
-    if (totalCountDisplay) {
-        totalCountDisplay.textContent = count;
-    }
-
-    // 3. Update the "Results" count above the grid
-    const resultsCountDisplay = document.getElementById('results-count');
-    if (resultsCountDisplay) {
-        resultsCountDisplay.textContent = `${count} Found`;
-    }
-});
