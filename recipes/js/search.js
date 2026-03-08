@@ -23,10 +23,6 @@ searchInput?.addEventListener('keyup', (e) => {
     resultsCount.textContent = `${visibleCount} Found`;
 
     visibleCount === 0 ? noResults.classList.remove('hidden') : noResults.classList.add('hidden');
-
-    // Show updated counter
-    const visibleCounter = document.querySelectorAll('.recipe-card:not(.hidden)').length;
-    document.getElementById('results-count').textContent = `${visibleCounter} Found`;
 });
 
 // Global Image Fallback (Removes the need for inline 'onerror')
